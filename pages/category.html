@@ -1,10 +1,321 @@
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<style src="../css/common.css"></style>
 <style>
-	
-</style>
-<script>
-	
-</script>
+	a {
+		text-decoration: none;
+		color: #333;
+	}
+	.zhuye a:hover {
+		color: orange;
+	}
+	.zhuye a:first-child {
+		font-size: 24px;
+		font-weight: bold;
+	}
+	.anniu {
+		padding: 10px;
+		position: relative;
+	}
+	.anniu div {
+		display: inline-block;
+		width: 100px;
+		height: 50px;
+		margin-left: 20px;
+		border: 1px solid #333;
+		line-height: 50px;
+		text-align: center;
+		border-radius: 10px;
+		cursor: pointer;
+	}
+	.anniu div:hover {
+		background-color: #ededed;
+		border-color: #ededed;
+	}
+	input[type=search] {
+		height: 50px;
+		position: absolute;
+		right: 50px;
+		width: 240px;
+		text-indent: 2em;
+		border-radius: 15px;
+		border-style: none;
+		border: 1px solid #ededed;
+	}
+	.content table {
+		border: 1px solid #ededed;
+		border-collapse: collapse;
+		width: 100%;
+		text-align: center;
+		
+	}
+	.content table td {
+		border: 3px solid #f4faf7;
+		height: 44px;
+	}
+	thead {
+		background-color: #ededed;
+	}
+	input[type=checkbox] {
 
-<div class="customer">
-	<div>栏目管理</div>
+	}
+	#one {
+		display: none;
+	}
+
+
+
+
+	.overcolor {
+		background-color: lightblue;
+	}
+	.mo {
+		position: absolute;
+		background-color: #dff4eb;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%,-50%);
+		width: 500px;
+		height: 350px;
+		padding: 100px;
+		box-sizing: border-box;
+		border-radius: 50px;
+	}
+	.mo table {
+		text-align: center;
+		line-height: 30px;
+	}
+	.mo1 {
+		display: none;
+	}
+</style>
+
+
+<div class="mo1">
+		<table class="motable">
+			<tr>
+				<td>分类名称：</td>
+				<td><input type="text"></td>
+			</tr>
+			<tr>
+				<td>数量：</td>
+				<td><input type="text"></td>
+			</tr>
+			<tr>
+				<td>类型：</td>
+				<td><input type="text"></td>
+			</tr>
+			<tr class="tj">
+				<td colspan="2"><input type="submit" value="确认">&nbsp;&nbsp;<input type="submit" value="取消"></td>
+			</tr>
+		</table>
+	</div>
+
+
+	<div class="customer">
+	<div class="zhuye"><a href="#">主页</a>&nbsp;/&nbsp;<a href="#">分类管理</a></div>
+	<div class="anniu">
+		<div>添加</div>
+		<div>批量删除</div>
+		<div>导出</div>
+		<input type="search" placeholder="请输入搜索内容">
+	</div>
+	<div class="content">
+		<table>
+			<thead>
+				<tr>
+					<td width="80px;"><input type="checkbox"></td>
+					<td width="150px">编号</td>
+					<td>分类名称</td>
+					<td>数量</td>
+					<td>类型</td>
+					<td width="200px">操作</td>
+				</tr>
+			</thead>
+			<tbody id="tbody">
+				<tr id="one">
+					<td><input type="checkbox"></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td><a href="#" class="del">删除</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="modify">修改</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
+<!-- 基本变量 -->
+	<script>
+		var baseURL = "http://134.175.154.93:6677";
+		var tbody = document.getElementById("tbody")
+		var one = document.getElementById('one');
+		var mo = document.getElementsByClassName('mo1')[0];
+		// var name = document.querySelector("input[type=submit]");
+		// console.log(name)
+		var sub = document.getElementsByClassName('tj')[0].children[0].children[0];
+		var motable = document.getElementsByClassName('motable')[0];
+		// var name_v = motable.children[0].children[0].children[1].children[0].value;
+		// var num_v = motable.children[0].children[1].children[1].children[0].value;
+		// var type_v = motable.children[0].children[2].children[1].children[0].value;
+		// console.log(sub)
+	</script>
+<!-- 查找 -->
+	<script>
+
+		$(".anniu input").on("keyup",function() {
+			// if (this.keyCode == 13) {
+				var name_v = document.getElementsByClassName("anniu")[0].getElementsByTagName('input')[0].value;
+				// var name_v = "123"
+				// console.log(name_v)
+				var data = {
+					name:name_v
+				}
+				$.get(baseURL+"/category/queryCustomer",data,function(a,b){
+					Array.prototype.slice.call(tbody.children,0).forEach(function(item,index) {
+					if (index) {
+						tbody.removeChild(item);
+					}
+				})
+
+				a.data.forEach(function(item) {
+					var newTr = one.cloneNode(true);
+					newTr.setAttribute("id","");
+					newTr.children[1].innerText = item.id;
+					newTr.children[2].innerText = item.name;
+					newTr.children[3].innerText = item.num;
+					newTr.children[4].innerText = item.parentId;
+					tbody.appendChild(newTr);
+				})
+				})
+			// }
+		})
+	</script>
+<!-- 添加 -->
+	<script>
+		$(".anniu div:first-child").on("click",function(event) {
+			
+			motable.children[0].children[0].children[1].children[0].value = "";
+			motable.children[0].children[1].children[1].children[0].value = "";
+			motable.children[0].children[2].children[1].children[0].value = "";
+			mo.setAttribute("class","mo");
+			$(sub).on("click",function() {
+				var name_v = motable.children[0].children[0].children[1].children[0].value;
+				var num_v = motable.children[0].children[1].children[1].children[0].value;
+				var type_v = motable.children[0].children[2].children[1].children[0].value;
+				var data = {
+					name:name_v,
+					num:num_v,
+					type:type_v
+				}
+				// alert(2)
+				$.post(baseURL+"/category/insertCategory",data,function(a,b) {
+					// alert(1)
+					reload();
+				})
+				mo.setAttribute("class","mo1")
+			})
+		})
+	</script>
+<!-- 取消键 -->
+	<script>
+		$(".tj input:nth-child(2)").on("click",function() {
+			mo.setAttribute("class","mo1");
+		});
+	</script>
+<!-- 删除&修改 -->
+	<script>
+		$("tbody").on("click","a",function(event) {
+			var id = this.parentNode.parentNode.children[1].innerText;
+			// var name = "zhangsan";
+			var data = {
+				id:id,
+			}
+			if (this.getAttribute("class") == "del") {
+				// alert(1);
+				$.post(baseURL+"/category/deleteByCategoryId",data,function(a,b) {
+					reload();
+				})
+			}
+			if (this.getAttribute("class") == "modify") {
+					mo.setAttribute("class","mo");
+					$(sub).on("click",function(evevt) {
+						var name_v = motable.children[0].children[0].children[1].children[0].value;
+						var num_v = motable.children[0].children[1].children[1].children[0].value;
+						var type_v = motable.children[0].children[2].children[1].children[0].value;
+
+						var data = {
+							id:id,
+							name:name_v,
+							num:num_v,
+							parentId:type_v
+						}
+						$.post(baseURL+"/category/updateCategory",data,function(a,b) {
+						mo.setAttribute("class","mo1")
+						reload();
+				})
+					})
+				
+			}
+		})
+	</script>
+<!-- 批量删除 -->
+	<script>
+	$("thead").on("click","input[type=checkbox]",function() {
+		if ($("thead input[type=checkbox]").is(":checked")) {
+			$("tbody input[type=checkbox]").attr("checked",true);
+		}
+		else $("tbody input[type=checkbox]").attr("checked",false);
+	})
+		// if($("thead checkbox").is(":checked")) {
+		// 	$("tbody checkbox").addClass("checked","checked");
+		// 	reload()
+		// }
+	</script>
+	<script>
+		$(".anniu div:nth-child(2)").on("click",function() {
+			Array.prototype.slice.call(tbody.children,0).forEach(function(item,index) {
+				var is = item.children[0].children[0]
+				var ru = $(is).is(":checked")
+				if (index&&ru) {
+					$(item.children[5].children[0]).trigger("click")
+				}
+				
+			})
+			// $("thead input[type=checkbox]").attr("checked",false);
+		})
+	</script>
+<!-- 鼠标经过变色 -->
+	<script>
+		$(".content tbody").on("mouseover","tr",function() {
+			$(this).addClass("overcolor");
+		})
+		$(".content tbody").on("mouseout","tr",function() {
+			$(this).removeClass("overcolor");
+		})
+	</script>
+<!-- 重载 -->
+	<script>
+
+		var xml = new XMLHttpRequest();
+		
+		function reload() {
+			$.get(baseURL+"/category/findAllCategory",function(a,b) {
+				Array.prototype.slice.call(tbody.children,0).forEach(function(item,index) {
+					if (index) {
+						tbody.removeChild(item);
+					}
+				})
+
+				a.data.forEach(function(item) {
+					var newTr = one.cloneNode(true);
+					newTr.setAttribute("id","");
+					newTr.children[1].innerText = item.id;
+					newTr.children[2].innerText = item.name;
+					newTr.children[3].innerText = item.num;
+					newTr.children[4].innerText = item.parentId;
+					tbody.appendChild(newTr);
+				})
+			})
+		}
+		reload();
+	</script>
