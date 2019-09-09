@@ -7,21 +7,31 @@
 		}
 		.table td {
 			/*font-size: 12px;*/
-			border: 1px solid #ccc;
+			border: 2px solid #ccc;
 			line-height: 2em;
+			font-size: 16px;
+
+		}
+		
+		thead.biaotou{
+			background-color: #e86486;
 		}
 		.table td>a{
 			
 		}
 		.table td.current{
-			background-color: green;
+			background-color:pink;
 		}
 		body{
-			font-size: 10px;
+			font-size: 14px;
 		}
 		p{
-			background-color: 
-			font-size:20px;
+			/*background-color: teal;*/
+			font-size:24px;
+			width: 100px;
+			font-weight: bold;
+			margin-bottom: 10px;
+			border-radius: 3px;
 			line-height: 2em;
 			padding: 4px;
 		}
@@ -30,6 +40,7 @@
 			border-radius: 3px;
 			background-color: teal;
 			color: #ededed;
+			font-weight: bold;
 			cursor: pointer;
 			display: inline-block;
 			font-size: 10px;
@@ -58,8 +69,8 @@
 						<td>`+item.status+`</td>
 						<td>`+item.telephone+`</td>
 						<td>
-							<a href="#" id="rm_Tr">删除</a>
-							<a href="#" id="upd_Tr">修改</a>
+							<a href="javaScript:void(0)" id="rm_Tr">删除</a>
+							<a href="javaScript:void(0)" id="upd_Tr">修改</a>
 						</td>
 					</tr>`)
 				$("tbody").append(newTr);
@@ -170,8 +181,8 @@
 
 	<table class="table" id="fwybiao">
 	<!-- 服务员表 -->
-		<thead>
-			<td width="80px">编号</td>
+		<thead class="biaotou">
+			<td width="30px">编号</td>
 			<td width="60px">姓名</td>
 			<td width="60px">状态</td>
 			<td width="150px">手机号</td>
