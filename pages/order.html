@@ -24,9 +24,12 @@
 		}
 		
 </style>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script>
 	var baseURL = "http://134.175.154.93:6677";
 // 加载数据
+
+
 function reloadData(){
 	var url = baseURL+"/order/findAllOrder";
 	$.get(url,function(response,status){
@@ -58,25 +61,26 @@ $(function(){
 	reloadData();
 	//在此之后添加事件
 
-	
-
 
 
 	// 为批量删除按钮绑定事件
+	
+
 	$("#btn_batch_del").click(function(){
 		var ids = 
-		$("#customer_tbl input:checkbox").filter(":checked")
+		$("#order_tbl input:checkbox").filter(":checked")
+
 		.map(function(index,item){
-			console.log(item)
-			return $(item).val()
-		})
+			return $(item).val();
+			})
+
 		.toArray();
+
 		// 调用后台接口删除顾客信息
 		/*
 		[1,2]
 		"ids=1&ids=2"
 		*/
-		console.log(ids)
 		var data ="";
 		for(var key in ids){
 			var id = ids[key];
@@ -87,13 +91,33 @@ $(function(){
 			}
 		}
 
+
+		console.log(ids)
+		
+
+
+
+
+
+
+       
+
+if (ids.length==0){
+			alert("请勾选批量删除");
+		}else{
+			console.log(ids.length)
+		}
+
+
+
+
 		$.ajax({
 			url:baseURL+"/order/batchDeleteOrder",
 			method:"post",
 			data:data,
 			success:function(result){
-				console.log(result);
-				if(result.status === 200){
+				// console.log(result);
+                if(result.status === 200){
 					alert("批量删除成功");
 					// 更新页面
 					reloadData();
@@ -103,6 +127,11 @@ $(function(){
 			}
 		})
 	})
+
+
+
+
+
 })
 </script>
 
