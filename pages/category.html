@@ -1,5 +1,5 @@
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
-<style src="../css/common.css"></style>
+
 <style>
 	a {
 		text-decoration: none;
@@ -89,8 +89,7 @@
 	}
 </style>
 
-
-<div class="mo1">
+<div class="mo1" id="mymo">
 		<table class="motable">
 			<tr>
 				<td>分类名称：</td>
@@ -110,8 +109,7 @@
 		</table>
 	</div>
 
-
-	<div class="customer">
+<div class="customer">
 	<div class="zhuye"><a href="#">主页</a>&nbsp;/&nbsp;<a href="#">分类管理</a></div>
 	<div class="anniu">
 		<div>添加</div>
@@ -133,7 +131,7 @@
 			</thead>
 			<tbody id="tbody">
 				<tr id="one">
-					<td><input type="checkbox"></td>
+					<td><input type="checkbox" checkedd="false"></td>
 					<td></td>
 					<td></td>
 					<td></td>
@@ -144,23 +142,158 @@
 		</table>
 	</div>
 </div>
-<!-- 基本变量 -->
-	<script>
-		var baseURL = "http://134.175.154.93:6677";
-		var tbody = document.getElementById("tbody")
+
+<script>
+	var baseURL = "http://134.175.154.93:6677";
+	var tbody = document.getElementById("tbody")
 		var one = document.getElementById('one');
 		var mo = document.getElementsByClassName('mo1')[0];
-		// var name = document.querySelector("input[type=submit]");
-		// console.log(name)
+
 		var sub = document.getElementsByClassName('tj')[0].children[0].children[0];
 		var motable = document.getElementsByClassName('motable')[0];
-		// var name_v = motable.children[0].children[0].children[1].children[0].value;
-		// var num_v = motable.children[0].children[1].children[1].children[0].value;
-		// var type_v = motable.children[0].children[2].children[1].children[0].value;
-		// console.log(sub)
-	</script>
-<!-- 查找 -->
-	<script>
+
+
+
+		// <!-- 添加 -->
+
+		$(".anniu div:first-child").on("click",function(event) {
+
+			motable.children[0].children[0].children[1].children[0].value = "";
+			motable.children[0].children[1].children[1].children[0].value = "";
+			motable.children[0].children[2].children[1].children[0].value = "";
+			mo.setAttribute("class","mo");
+			sessionStorage.setItem("lid",null)
+		})
+
+		$("#mymo").on("click","input[type=submit]",function() {
+
+				var name_v = motable.children[0].children[0].children[1].children[0].value;
+				var num_v = motable.children[0].children[1].children[1].children[0].value;
+				var type_v = motable.children[0].children[2].children[1].children[0].value;
+
+				var id = sessionStorage.getItem("lid")
+				console.log(typeof id)
+				// alert(id)
+				// alert(!!id)
+				
+				if(id == "null"){
+					var data = {
+					name:name_v,
+					num:num_v,
+					type:type_v
+				}
+				// alert(2)
+				console.log(data)
+				$.post(baseURL+"/category/insertCategory",data,function(a,b) {
+					// alert(1)
+					reload();
+			motable.children[0].children[0].children[1].children[0].value = "";
+			motable.children[0].children[1].children[1].children[0].value = "";
+			motable.children[0].children[2].children[1].children[0].value = "";
+			mo.setAttribute("class","mo1")
+				})	
+				}
+				else {
+						var name_v = motable.children[0].children[0].children[1].children[0].value;
+						var num_v = motable.children[0].children[1].children[1].children[0].value;
+						var type_v = motable.children[0].children[2].children[1].children[0].value;
+						var id = sessionStorage.getItem("lid");
+						var data = {
+							id:id,
+							name:name_v,
+							num:num_v,
+							parentId:type_v
+						}
+						$.post(baseURL+"/category/updateCategory",data,function(a,b) {
+						mo.setAttribute("class","mo1")
+						reload();
+						mo.setAttribute("class","mo1")
+						sessionStorage.setItem("lid",null)
+				})
+				}//else end
+			})
+
+// <!-- 删除&修改 -->
+
+		$("tbody").on("click","a",function(event) {
+			var id = this.parentNode.parentNode.children[1].innerText;
+			// var name = "zhangsan";
+			var data = {
+				id:id,
+			}
+			if (this.getAttribute("class") == "del") {
+				// alert(1);
+				$.post(baseURL+"/category/deleteByCategoryId",data,function(a,b) {
+					reload();
+				})
+			}
+			if (this.getAttribute("class") == "modify") {
+					mo.setAttribute("class","mo");
+					sessionStorage.setItem("lid",id);	
+			}
+		})
+
+// <!-- 批量删除 -->
+
+	$("thead").on("click","input[type=checkbox]",function() {
+		if ($("thead input[type=checkbox]").is(":checked")) {
+			$("tbody input[type=checkbox]").attr("checked",true);
+		}
+		else {$("tbody input[type=checkbox]").attr("checked",false)};
+
+		$("tbody input[type=checkbox]").eq(0).attr("checked",false)
+	})
+
+
+		$(".anniu div:nth-child(2)").on("click",function() {
+			// Array.prototype.slice.call(tbody.children,0).forEach(function(item,index) {
+			// 	var is = item.children[0].children[0]
+			// 	var ru = $(is).is(":checked")
+			// 	if (index&&ru) {
+			// 		$(item.children[5].children[0]).trigger("click")
+			// 		console.log(item.children[5].children[0].trigger("click"))
+			// 		// $(".del").trigger("click")
+			// 	}
+				
+			// })
+		
+			var ids = ""
+			$("tbody input[type=checkbox]").filter(":checked").map(function(index) {
+				if (index == 0) {
+					ids += "ids="+$(this).parents("tr").children().eq(1).text()
+				}
+				else {
+					ids += "&ids="+$(this).parents("tr").children().eq(1).text()
+				}
+
+			})
+			 console.log(ids)
+
+		// 	$.post(baseURL+"/category/batchDeleteCategory",ids,function(a,b) {
+		// 	if (a.status == 200) {
+		// 		reload();
+		// 	}
+		// })
+		$.ajax({
+			url:baseURL+"/category/batchDeleteCategory",
+			method:"post",
+			async:true,
+			contentType:"application/x-www-form-urlencoded",
+			data:ids,
+			// dataType:"string",
+			// processData:false,
+			success:function(a,b) {
+				if (a.status == 200) {
+					reload();
+				}
+			}
+		})
+
+		})
+
+
+// <!-- 查找 -->
+
 
 		$(".anniu input").on("keyup",function() {
 			// if (this.keyCode == 13) {
@@ -189,116 +322,9 @@
 				})
 			// }
 		})
-	</script>
-<!-- 添加 -->
-	<script>
-		$(".anniu div:first-child").on("click",function(event) {
-			
-			motable.children[0].children[0].children[1].children[0].value = "";
-			motable.children[0].children[1].children[1].children[0].value = "";
-			motable.children[0].children[2].children[1].children[0].value = "";
-			mo.setAttribute("class","mo");
-			$(sub).on("click",function() {
-				var name_v = motable.children[0].children[0].children[1].children[0].value;
-				var num_v = motable.children[0].children[1].children[1].children[0].value;
-				var type_v = motable.children[0].children[2].children[1].children[0].value;
-				var data = {
-					name:name_v,
-					num:num_v,
-					type:type_v
-				}
-				// alert(2)
-				$.post(baseURL+"/category/insertCategory",data,function(a,b) {
-					// alert(1)
-					reload();
-				})
-				mo.setAttribute("class","mo1")
-			})
-		})
-	</script>
-<!-- 取消键 -->
-	<script>
-		$(".tj input:nth-child(2)").on("click",function() {
-			mo.setAttribute("class","mo1");
-		});
-	</script>
-<!-- 删除&修改 -->
-	<script>
-		$("tbody").on("click","a",function(event) {
-			var id = this.parentNode.parentNode.children[1].innerText;
-			// var name = "zhangsan";
-			var data = {
-				id:id,
-			}
-			if (this.getAttribute("class") == "del") {
-				// alert(1);
-				$.post(baseURL+"/category/deleteByCategoryId",data,function(a,b) {
-					reload();
-				})
-			}
-			if (this.getAttribute("class") == "modify") {
-					mo.setAttribute("class","mo");
-					$(sub).on("click",function(evevt) {
-						var name_v = motable.children[0].children[0].children[1].children[0].value;
-						var num_v = motable.children[0].children[1].children[1].children[0].value;
-						var type_v = motable.children[0].children[2].children[1].children[0].value;
 
-						var data = {
-							id:id,
-							name:name_v,
-							num:num_v,
-							parentId:type_v
-						}
-						$.post(baseURL+"/category/updateCategory",data,function(a,b) {
-						mo.setAttribute("class","mo1")
-						reload();
-				})
-					})
-				
-			}
-		})
-	</script>
-<!-- 批量删除 -->
-	<script>
-	$("thead").on("click","input[type=checkbox]",function() {
-		if ($("thead input[type=checkbox]").is(":checked")) {
-			$("tbody input[type=checkbox]").attr("checked",true);
-		}
-		else $("tbody input[type=checkbox]").attr("checked",false);
-	})
-		// if($("thead checkbox").is(":checked")) {
-		// 	$("tbody checkbox").addClass("checked","checked");
-		// 	reload()
-		// }
-	</script>
-	<script>
-		$(".anniu div:nth-child(2)").on("click",function() {
-			Array.prototype.slice.call(tbody.children,0).forEach(function(item,index) {
-				var is = item.children[0].children[0]
-				var ru = $(is).is(":checked")
-				if (index&&ru) {
-					$(item.children[5].children[0]).trigger("click")
-				}
-				
-			})
-			// $("thead input[type=checkbox]").attr("checked",false);
-		})
-	</script>
-<!-- 鼠标经过变色 -->
-	<script>
-		$(".content tbody").on("mouseover","tr",function() {
-			$(this).addClass("overcolor");
-		})
-		$(".content tbody").on("mouseout","tr",function() {
-			$(this).removeClass("overcolor");
-		})
-	</script>
-<!-- 重载 -->
-	<script>
-
-		var xml = new XMLHttpRequest();
-		
-		function reload() {
+//重载
+			function reload() {
 			$.get(baseURL+"/category/findAllCategory",function(a,b) {
 				Array.prototype.slice.call(tbody.children,0).forEach(function(item,index) {
 					if (index) {
@@ -316,6 +342,6 @@
 					tbody.appendChild(newTr);
 				})
 			})
-		}
-		reload();
-	</script>
+			}
+			reload();
+</script>
