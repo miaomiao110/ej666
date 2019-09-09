@@ -1,4 +1,23 @@
 <style>
+    html {
+	color: #333;
+	font:normal 14px '微软雅黑','Microsoft YaHei';
+}
+body,ul,ol,p,h1,h2,h3 {
+	margin: 0;
+	padding: 0;
+}
+ul,ol {
+	list-style: none;
+}
+a {
+	text-decoration: none;
+	color: #333;
+}
+    h1{
+    	text-align: center;
+    }
+
 	.table {
 			border-collapse: collapse;
 			width: 100%;
@@ -21,6 +40,9 @@
 		}
 		.btns {
 			margin-bottom: .5em;
+		}
+		.searchbutton{
+			margin-left: -5px;
 		}
 		
 </style>
@@ -135,7 +157,7 @@ if (ids.length==0){
 })
 </script>
 
-	<h2>订单管理</h2>
+	<h1>订单管理</h1>
 	<div class="order">
 	<!-- 注释节点 -->
 	<div class="btns">
@@ -149,7 +171,7 @@ if (ids.length==0){
 		<form id="order_form" action="javascript:void(0)">
 			<input type="hidden" name="id" />
 			订单编号<input type="text" name="orderId"/>
-			<input type="submit" value="搜索订单">
+			<input type="submit" value="搜索订单" class="searchbutton">
 		</form>
 	</div>
 
