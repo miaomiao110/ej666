@@ -1,0 +1,33 @@
+<style>
+	
+</style>
+<script>
+function init(){
+	var category_id = sessionStorage.getItem("productId");
+	// 通过id查找用户信息
+	var url = "http://134.175.154.93:6677/product/findProductByCategoryId?category_id="+category_id;
+	$.get(url,function(result){
+		if(result.status === 200){
+			$("#h2_name").text(result.data.name);
+		} else {
+			alert(result.message);
+		}
+	});
+}
+$(function(){
+	init();
+
+	$(".back").click(function(){
+		var url ="./pages/product.html"
+		$("#wrapper").load(url+"?time="+Math.random())
+	});
+});
+</script>
+
+<div class="customerDetails">
+	<div>产品详情</div>
+	<h2>产品名称： <span id="h2_name"></span></h2>
+	<h2>产品详情： <div id="h2_description"></div></h2>
+	<h2>价格： <div id="h2_price"></div></h2>
+	<button class="back">返回</button>
+</div>

@@ -1,4 +1,23 @@
 <style>
+    html {
+	color: #333;
+	font:normal 14px '微软雅黑','Microsoft YaHei';
+}
+body,ul,ol,p,h1,h2,h3 {
+	margin: 0;
+	padding: 0;
+}
+ul,ol {
+	list-style: none;
+}
+a {
+	text-decoration: none;
+	color: #333;
+}
+    h1{
+    	text-align: center;
+    }
+
 	.table {
 			border-collapse: collapse;
 			width: 100%;
@@ -22,20 +41,26 @@
 		.btns {
 			margin-bottom: .5em;
 		}
+		.searchbutton{
+			margin-left: -5px;
+		}
 		
 </style>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
 <script>
 	var baseURL = "http://134.175.154.93:6677";
 // 加载数据
+
+
 function reloadData(){
 	var url = baseURL+"/order/findAllOrder";
 	$.get(url,function(response,status){
 		//1. 将tbody清空
-		$("#customer_tbl tbody").empty();
+		$("#order_tbl tbody").empty();
 		//2. 追加新的值
 		response.data.forEach(function(item){
 			var newTr = $(`<tr>
-				<td><input type="checkbox"></td>
+				<td><input type="checkbox" value="`+item.id+`"></td>
 				<td>`+item.id+`</td>
 				<td>`+item.orderTime+`</td>
 				<td>`+item.total+`</td>
@@ -44,11 +69,10 @@ function reloadData(){
 				<td>`+item.addressId+`</td>
 				<td>
 					<a class="btn_del" href="javascript:void(0)">删除</a>
-					<a class="btn_upd" href="javascript:void(0)">修改</a>
 					<a class="btn_details" href="javascript:void(0)">详情</a>
 				</td>
 			</tr>`);
-			$("#customer_tbl").append(newTr)
+			$("#order_tbl").append(newTr)
 		});
 	});
 }
@@ -61,13 +85,79 @@ $(function(){
 
 
 
+	// 为批量删除按钮绑定事件
+	
+
+	$("#btn_batch_del").click(function(){
+		var ids = 
+		$("#order_tbl input:checkbox").filter(":checked")
+
+		.map(function(index,item){
+			return $(item).val();
+			})
+
+		.toArray();
+
+		// 调用后台接口删除顾客信息
+		/*
+		[1,2]
+		"ids=1&ids=2"
+		*/
+		var data ="";
+		for(var key in ids){
+			var id = ids[key];
+			if(key==0){
+				data+="ids="+id
+			} else {
+				data+="&ids="+id
+			}
+		}
+
+
+		console.log(ids)
+		
+
+
+
+
+
+
+       
+
+if (ids.length==0){
+			alert("请勾选批量删除");
+		}else{
+			console.log(ids.length)
+		}
+
+
+
+
+		$.ajax({
+			url:baseURL+"/order/batchDeleteOrder",
+			method:"post",
+			data:data,
+			success:function(result){
+				// console.log(result);
+                if(result.status === 200){
+					alert("批量删除成功");
+					// 更新页面
+					reloadData();
+				} else {
+					alert(result.message);
+				}
+			}
+		})
+	})
+
+
 
 
 
 })
 </script>
 
-	<h2>订单管理</h2>
+	<h1>订单管理</h1>
 	<div class="order">
 	<!-- 注释节点 -->
 	<div class="btns">
@@ -81,12 +171,12 @@ $(function(){
 		<form id="order_form" action="javascript:void(0)">
 			<input type="hidden" name="id" />
 			订单编号<input type="text" name="orderId"/>
-			<input type="submit" value="搜索订单">
+			<input type="submit" value="搜索订单" class="searchbutton">
 		</form>
 	</div>
 
 
-	<table  class="table" id="customer_tbl">
+	<table  class="table" id="order_tbl">
 		<thead>
 			<tr>
 			<td>请选择</td>

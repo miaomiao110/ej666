@@ -14,39 +14,52 @@
 	.none {
 		display: none;
 	}
+	.none1{
+		display: none;
+	}
 	.btn {
 		padding: .5em 1em;
-		border-radius: 3px;
+		border-radius: 10px;
 		color: #333;
 		border:1px solid #ccc;
 		cursor: pointer;
 		display: inline-block;
+		background-color: teal;
 	}
 	.btns {
 		margin-bottom: .5em;
+	}
+	.one{
+		background-color: lightblue;
+	}
+	.btn_del{
+		color: red;
 	}	
 </style>
 <!-- <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script> -->
 <div class="customer">
 	<div class="btns">
 		<div id="btn_add" class="btn">添加</div>
-		<div id="btn_import" class="btn">批量导入</div>
+		<div id="btn_batch_del" class="btn">批量删除</div>
 	</div>
 	
-	<div style="margin-bottom: .5em">
+	<div style="margin-bottom: .5em" class="none1" id=none1>
 		<!-- 表单 -->
-		<form action="javascript:void(0)">
+		<form id="customer_form" action="javascript:void(0)">
 			<input type="hidden" name="id" />
 			商品名称<input type="text" name="name"/>
 			商品描述<input type="text" name="description"/>
 			价格 <input type="text" name="price"/>
-			<input type="submit" value="提交">
+			<input type="submit" value="提交" id="submit">
 		</form>
 	</div>
-
+    <form id="search" action="javascript:void(0)">
+        <input type="search" placeholder="请输入搜索内容">
+    	
+    </form>
 	<table class="table" id="customer_tbl">
 		<thead>
-			<tr>
+			<tr class="one">
 				<td width="80px">编号</td>
 				<td>商品名称</td>
 				<td>商品描述</td>
@@ -79,107 +92,172 @@
 				    <td></td>
 				    <td></td>
 				    <td>
-					    <a class="btn_del" href="#">删除</a>
-					    <a class="btn_upd" href="#">更新</a>
+					    <a class="btn_del" href="javascript:void(0)">删除</a>
+					    <a class="btn_upd" href="javascript:void(0)">更新</a>
+					    <a class="btn_details" href="javascript:void(0)">详情</a>
 				    </td>
 			    </tr>`);
 			    $("#customer_tbl").append(newTr)
 		    });
 	    }); 
     }
-    	var btn_add = document.getElementById("btn_add");
-		var tbody = document.getElementsByTagName("tbody")[0];
-		// 为表单绑定事件
-		$("tbody").on({
-				mouseover:function(){
-					this.className = "current"
-				},
-				mouseout:function(){
-					this.className = ""
-				}
-			},'tr')
-		// 给添加按钮绑定事件
-		// btn_add.onclick = function(){
-	    $("#btn_add").on("click",function(){
-			document.querySelector("input[name=name]").value = "";
-			document.querySelector("input[name=description]").value = "";
-			document.querySelector("input[name=price]").value = "";
-			document.querySelector("input[name=id]").value = "";
-			document.forms[0].onsubmit = function(event){
-		    
-			// 1. 获取用户的输入
-			    var id = document.querySelector("input[name=id]").value;
-			    var name = document.querySelector("input[name=name]").value;
-			    var description = document.querySelector("input[name=description]").value;
-			    var price = document.querySelector("input[name=price]").value;
-			    var url = baseURL+"/product/insertProduct";
-			    var data ={
-				    id:id,
-				    name:name,
-				    description:description,
-				    price:price
-			    };
-
-			    $.post(url,data,function(a,b){
-				    alert(a.message);
-				    reloadData();
-			    });
-			    event.preventDefault();
+	// 为表单绑定事件
+	$("tbody").on({
+		mouseover:function(){
+			this.className = "current"
+		},
+		mouseout:function(){
+			this.className = ""
+		}
+	},'tr')
+    // 给添加按钮绑定事件
+    $("#btn_add").click(function(){
+    	$("#none1").removeClass("none1");
+		$("#customer_form input[name=id]").val("");
+		$("#customer_form input[name=name]").val("");
+		$("#customer_form input[name=description]").val("");
+		$("#customer_form input[name=price]").val("");
+	    // 为表单绑定提交事件
+	    $("#customer_form").submit(function(event){
+		    //1. 获取表单元素的值
+		    var id = $(this).find("input[name=id]").val();
+		    var name = $(this).find("input[name=name]").val();
+		    var description = $(this).find("input[name=description]").val();
+		    var price = $(this).find("input[name=price]").val();
+		    //2. 与后台进行交互
+		    var data = {
+			    id:id,
+			    name:name,
+			    description:description,
+			    price:price
 		    }
+		    var url = baseURL+"/product/insertProduct";
+		    $.post(url,data,function(result){
+			    if(result.status === 200){
+				    alert("保存成功");
+				    // 更新页面
+				    reloadData();
+			    } else {
+				    alert(result.message);
+			    }
+		    })
+
+		    event.preventDefault();
+	    });
+	    $("#submit").on("click",function(){
+            $("#none1").addClass("none1");
+	    })
+    });
+	// 为批量删除按钮绑定事件
+	$("#btn_batch_del").click(function(){
+		var idList = 
+		$("#customer_tbl input:checkbox").filter(":checked")
+		.map(function(index,item){
+			return $(item).val()
 		})
-
-
-
-        tbody.onclick = function(event){
-			if(event.target.nodeName === "A"){
-				switch(event.target.className){
-					case "btn_del":
-						// 1. 先获取要删除的id
-						var id = event.target.parentNode.parentNode.firstElementChild.firstElementChild.value;
-						// 2. 编写ajax进行删除
-						var url = baseURL+"/product/deleteProductById";
-						var data = "id="+id;
-						$.post(url,data,function(response,status){
-							alert(response.message);
-							reloadData();
-						});
-						break;
-					case "btn_upd":
-						var id = event.target.parentNode.parentNode.children[0].firstElementChild.value;
-						var name = event.target.parentNode.parentNode.children[1].innerText;
-						var description = event.target.parentNode.parentNode.children[2].innerText;
-						var price = event.target.parentNode.parentNode.children[3].innerText;
-						document.querySelector("input[name=name]").value = name;
-						document.querySelector("input[name=description]").value = description;
-						document.querySelector("input[name=price]").value = price;
-						document.querySelector("input[name=id]").value = id;
-						document.forms[0].onsubmit = function(event){
-			            // 1. 获取用户的输入
-
-			            var id = document.querySelector("input[name=id]").value;
-			            var name = document.querySelector("input[name=name]").value;
-			            var description = document.querySelector("input[name=description]").value;
-			            var price = document.querySelector("input[name=price]").value;
-
-
-			            var url = baseURL+"/product/updateProduct";
-			            var data ={
-				            id:id,
-				            name:name,
-				            description:description,
-				            price:price
-			            };
-
-			            $.post(url,data,function(a,b){
-				            alert(a.message);
-				            reloadData();
-			            });
-			            event.preventDefault();
-		                }
-
-				    break;
-				}
+		.toArray();
+		var data ="";
+		for(var key in idList){
+			var id = idList[key];
+			if(key==0){
+				data+="idList="+id
+			} else {
+				data+="&idList="+id
 			}
 		}
-		reloadData();
+
+		$.ajax({
+			url:baseURL+"/product/deleteBathProduct",
+			method:"post",
+			data:data,
+			success:function(result){
+				console.log(result);
+				if(result.status === 200){
+					alert("批量删除成功");
+					// 更新页面
+					reloadData();
+				} else {
+					alert(result.message);
+				}
+			}
+		})
+	})
+    //删除或修改
+	$("#customer_tbl").on("click","a",function(event){
+		switch(this.className){
+			case "btn_del":
+				// 获取当前行的id
+				var id = $(this).parents("tr").children().eq(0).find("input").val();
+				// 交互
+				var url = baseURL +"/product/deleteProductById";
+				var data = {
+					id:id
+				}
+
+				$.post(url,data,function(result){
+					if(result.status === 200){
+						// 更新页面
+						reloadData();
+					} else {
+						alert(result.message);
+					}
+				});
+				break;
+			case "btn_upd":
+				//1. 将当前行信息设置到表单中
+				$("#none1").removeClass("none1");
+				var id = $(this).parents("tr").children().eq(0).find("input").val();
+				var name = $(this).parents("tr").children().eq(1).text();
+				var description = $(this).parents("tr").children().eq(2).text();
+				var price = $(this).parents("tr").children().eq(3).text();
+
+				$("#customer_form input[name=id]").val(id);
+				$("#customer_form input[name=name]").val(name);
+				$("#customer_form input[name=description]").val(description);
+				$("#customer_form input[name=price]").val(price);
+				$("#customer_form").submit(function(event){
+		            //1. 获取表单元素的值
+		            var id = $(this).find("input[name=id]").val();
+		            var name = $(this).find("input[name=name]").val();
+		            var description = $(this).find("input[name=description]").val();
+		            var price = $(this).find("input[name=price]").val();
+		            //2. 与后台进行交互
+		            var data = {
+			            id:id,
+			            name:name,
+			            description:description,
+			            price:price
+		            }
+		            var url = baseURL+"/product/updateProduct";
+		            $.post(url,data,function(result){
+			            if(result.status === 200){
+				            alert("修改成功");
+				            // 更新页面
+				            reloadData();
+			            }else{
+				            alert(result.message);
+			            }
+		            })
+
+		            event.preventDefault();
+	            });
+				$("#submit").on("click",function(){
+                    $("#none1").addClass("none1");
+	            })
+				break;
+			case "btn_details":
+			    // 获取当前行的id
+				var category_id = $(this).parents("tr").children().eq(0).find("input").val();
+				//跳转到详情页面
+			    var url="./pages/oderDetails.html";
+			    $("#wrapper").load(url+"?time="+Math.random())
+			    // 将值保存到浏览器中
+			    sessionStorage.setItem("productId",category_id)
+			    break;
+		}
+
+		event.preventDefault();
+	});
+	//查找
+    reloadData();
 </script>
