@@ -30,24 +30,16 @@ a {
 		.none {
 			display: none;
 		}
-		.btn {
-			padding: .5em 1em;
-			border-radius: 3px;
-			background-color: teal;
-			color: #ededed;
-			cursor: pointer;
-			display: inline-block;
-		}
-		.btns {
-			margin-bottom: .5em;
-		}
-		.searchbutton{
-			margin-left: -5px;
-		}
+		
 		
 </style>
+<meta charset="UTF-8">
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
+
 	var baseURL = "http://134.175.154.93:6677";
 // 加载数据
 
@@ -86,8 +78,6 @@ $(function(){
 
 
 	// 为批量删除按钮绑定事件
-	
-
 	$("#btn_batch_del").click(function(){
 		var ids = 
 		$("#order_tbl input:checkbox").filter(":checked")
@@ -98,11 +88,6 @@ $(function(){
 
 		.toArray();
 
-		// 调用后台接口删除顾客信息
-		/*
-		[1,2]
-		"ids=1&ids=2"
-		*/
 		var data ="";
 		for(var key in ids){
 			var id = ids[key];
@@ -112,27 +97,11 @@ $(function(){
 				data+="&ids="+id
 			}
 		}
-
-
-		console.log(ids)
-		
-
-
-
-
-
-
-       
-
-if (ids.length==0){
+		if (ids.length==0){
 			alert("请勾选批量删除");
 		}else{
 			console.log(ids.length)
 		}
-
-
-
-
 		$.ajax({
 			url:baseURL+"/order/batchDeleteOrder",
 			method:"post",
@@ -158,35 +127,36 @@ if (ids.length==0){
 </script>
 
 	<h1>订单管理</h1>
-	<div class="order">
+	<div class="container" id="order">
 	<!-- 注释节点 -->
 	<div class="btns">
-		<div id="btn_import" class="btn">批量导入</div>
-		<div id="btn_batch_del" class="btn">批量删除</div>
-		<div id="btn_export" class="btn">导出</div>
+		<div id="btn_import" class="btn btn-info">批量导入</div>
+		<div id="btn_batch_del" class="btn btn-info">批量删除</div>
+		<div id="btn_export" class="btn btn-info">导出</div>
 	</div>
-	
+	<br>
 	<div style="margin-bottom: .5em">
 		<!-- 表单 -->
+		<div>
 		<form id="order_form" action="javascript:void(0)">
-			<input type="hidden" name="id" />
-			订单编号<input type="text" name="orderId"/>
-			<input type="submit" value="搜索订单" class="searchbutton">
-		</form>
+
+			订单编号<input type="text" name="orderId" class="border-primary" style="border:1px solid blue; height:30px;"/>
+			<input type="submit" value="搜索订单" class="btn btn-primary" style="margin-left:-5px;">
+		</form></div>
 	</div>
 
 
-	<table  class="table" id="order_tbl">
-		<thead>
+	<table  class="table table-bordered" id="order_tbl">
+		<thead class="thead-dark">
 			<tr>
-			<td>请选择</td>
-		    <td width="80px">订单编号</td>
-			<td>下单时间</td>
-			<td>订单数量</td>
-			<td>顾客编号</td>
-			<td>保洁员编号</td>
-			<td>地址编号</td>
-			<td width="100px">操作</td>
+			<th>请选择</th>
+		    <th>订单编号</th>
+			<th>下单时间</th>
+			<th>订单数量</th>
+			<th>顾客编号</th>
+			<th>保洁员编号</th>
+			<th>地址编号</th>
+			<th width="100px">操作</th>
 			</tr>
 		</thead>
 		<tbody>
