@@ -34,14 +34,12 @@
 			cursor: pointer;
 			opacity: 0.5;
 			position: relative;
-			left: 15%;
 			display: inline-block;
 		}
 		.sous {
 			float: right;
 			position: relative;
-			bottom: 40px;
-			right: 135px;
+			bottom: 40px;	
 		}
 		.sous > .ss {
 		width: 200px;
@@ -65,10 +63,9 @@
 		.table {
 			margin:auto;
 			border-collapse: collapse;
-			width: 75%;
+			width: 100%;
 			text-align: center;
-			position: relative;
-			left: 10%
+			
 		}
 		.table td {
 			border:2px solid #ccc;
@@ -169,12 +166,13 @@
 	 	if(event.target.nodeName === "A"){
 	 		switch(event.target.className){
 	 			case "button_del":
-	 			var id = event.target.parentNode.parentNode.children[0].innerText;
-	 			var url = baseurl+"/comment/deleteCommentById";
-	 			var data = "id="+id;
-	 			$.post(url,data,function(a){
-	 				$("tbody").remove($("tr"));
-	 			});
+	 			// var id = event.target.parentNode.parentNode.children[0].value;
+	 			// var url = baseurl+"/comment/deleteCommentById";
+	 			// var data = "id="+id;
+	 			// console.log(id);
+	 			// $.post(url,data,function(a){
+	 			// 	$("tbody").remove($("tr"));
+	 			// });
 	 			// var xhr = new XMLHttpRequest();
 	 			// xhr.open("POST",url+"/customer/deleteCustomerById");
 	 			// xhr.responseType = "json";
@@ -193,20 +191,23 @@
 	 			// }
 	 			break;
 	 			case "button_thing":
-	 			var url = baseurl+"/comment/query";
-	 			$.get(url,function(a){
-	 				a.data.forEach(function(item){
-	 					var data = $(`
-						<div>ID为`+item.id+`</div>
-						<div>content为`+item.content+`</div>
-						<div>commentTime为`+item.commentTime+`</div>
-						<div>orderID为`+item.orderId+`</div>
-						<div>ID为`+item.id+`</div>
-						<div>order中的信息为：ID为`+item.order.id+`,orderTime为`+item.order.orderTime+`,total为`+item.order.total+`,customerId为`+item.order.customerId+`,waiterID为`+item.order.waiterId+`,address为`+item.order.address+`</div>
-	 						`);
-	 					$(".data").append(data);
-	 				})	
-	 			})
+	 			var url = "./comment_thing.html";
+	 			$("#wrapper").load(url+"?time="+Math.random());
+	 			break;
+	 			// var url = baseurl+"/comment/query";
+	 			// $.get(url,function(a){
+	 			// 	a.data.forEach(function(item){
+	 			// 		var data = $(`
+					// 	<div>ID为`+item.id+`</div>
+					// 	<div>content为`+item.content+`</div>
+					// 	<div>commentTime为`+item.commentTime+`</div>
+					// 	<div>orderID为`+item.orderId+`</div>
+					// 	<div>ID为`+item.id+`</div>
+					// 	<div>order中的信息为：ID为`+item.order.id+`,orderTime为`+item.order.orderTime+`,total为`+item.order.total+`,customerId为`+item.order.customerId+`,waiterID为`+item.order.waiterId+`,address为`+item.order.address+`</div>
+	 			// 			`);
+	 			// 		$(".data").append(data);
+	 			// 	})	
+	 			// })
 	 			break;
 	 		}
 	 		var current_tr = event.target.parentNode.parentNode;
