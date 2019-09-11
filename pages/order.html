@@ -136,15 +136,14 @@ $(function(){
 	</div>
 	<br>
 	<div style="margin-bottom: .5em">
-		<!-- 表单 -->
-		<div>
-		<form id="order_form" action="javascript:void(0)">
-
-			订单编号<input type="text" name="orderId" class="border-primary" style="border:1px solid blue; height:30px;"/>
-			<input type="submit" value="搜索订单" class="btn btn-primary" style="margin-left:-5px;">
-		</form></div>
+		<!-- 搜索框 -->
+		<div id="order_search" action="javascript:void(0)">
+		
+			<input type="text" name="orderId" class="border-primary" style="border:1px solid blue; height:32px; vertical-align: middle;" placeholder="请输入订单编码" />
+			<input type="submit" value="搜索订单" class="btn btn-primary" style="margin-left:-4px;">
+		</div>
 	</div>
-
+<br>
 
 	<table  class="table table-bordered" id="order_tbl">
 		<thead class="thead-dark">
